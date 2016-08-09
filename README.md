@@ -8,6 +8,15 @@ The toilet MaxiPago is a plugin that can only be used with the WooCommerce. His 
 
 To use it you must have an account on MaxiPago.
 
+
+## Support for Developers ##
+
+[WooCommerce - Class WC_Payment_Gateway](https://docs.woocommerce.com/wc-apidocs/class-WC_Payment_Gateway.html)
+
+[WooCommerce - Payment Gateway API](https://docs.woocommerce.com/document/payment-gateway-api/)
+
+[MaxiPago - Documentação de Integração - V2.0.2](http://www.maxipago.com/docs/maxiPago_API_Ultima.pdf)
+
 ## Thanks ##
 
 [Claudio Sanches](https://profiles.wordpress.org/claudiosanches/) and [Gabriel Reguly](https://profiles.wordpress.org/gabriel-reguly/) by develop an excellent code in PagSeguro WooCommerce plugin which served me as a starting base.

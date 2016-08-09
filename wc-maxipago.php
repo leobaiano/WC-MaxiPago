@@ -50,6 +50,9 @@
 					// Load Helpers
 					add_action( 'init', array( $this, 'load_helper' ) );
 
+					// Add the gateway to WooCommerce
+					add_filter( 'woocommerce_payment_gateways', array( $this, 'add_gateway' ) );
+
 					// Check if is admin
 					if ( is_admin() ) {
 						// Load styles and scripts in admin
@@ -129,6 +132,19 @@
 			 */
 			public function notice_woocommerce_missing() {
 				include 'views/html-notice-woocommerce-missing.php';
+			}
+
+			/**
+			 * Add the gateway to WooCommerce.
+			 *
+			 * @param array $methods WooCommerce payment methods.
+			 *
+			 * @return array Payment methods with MAxiPAgo.
+			 */
+			public function add_gateway( $methods ) {
+				$methods[] = 'WC_MaxiPago_Gateway';
+
+				return $methods;
 			}
 
 		} // end class WC_MaxiPago();

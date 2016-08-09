@@ -41,6 +41,9 @@
 			private function __construct() {
 				// Check if WooCommerce activated and if class WC_Payment_Gateway exists
 				if ( class_exists( 'WC_Payment_Gateway' ) ) {
+					// Include files
+					$this->includes();
+
 					// Load plugin text domain
 					add_action( 'plugins_loaded', array( $this, 'load_plugin_textdomain' ) );
 
@@ -134,6 +137,13 @@
 				foreach ( glob( $class_dir . "*.php" ) as $filename ){
 					include $filename;
 				}
+			}
+
+			/**
+			 * Includes.
+			 */
+			private function includes() {
+				include_once 'includes/wc-maxipago-gateway.php';
 			}
 
 			/**

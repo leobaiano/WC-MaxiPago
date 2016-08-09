@@ -89,7 +89,7 @@
 		 * Load styles and scripts
 		 *
 		 */
-		public function load_styles_and_scripts() {
+		public function load_admin_styles_and_scripts() {
 			wp_enqueue_style( self::$text_domain . '_admin_css_main', plugins_url( '/assets/css/admin_main.css', __FILE__ ), array(), null, 'all' );
 			$params = array(
 						'ajax_url'	=> admin_url( 'admin-ajax.php' )
@@ -110,4 +110,4 @@
 		}
 
 	} // end class Baianada();
-	add_action( 'plugins_loaded', array( 'Baianada', 'get_instance' ), 0 );
+	add_action( 'plugins_loaded', array( 'WC_MaxiPago', 'get_instance' ), 0 );

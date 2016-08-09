@@ -63,6 +63,9 @@
 					if ( is_admin() ) {
 						// Load styles and scripts in admin
 						add_action( 'admin_enqueue_scripts', array( $this, 'load_admin_styles_and_scripts' ) );
+
+						// Action links
+						add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), array( $this, 'plugin_action_links' ) );
 					}
 				} else {
 					// Check if is admin
@@ -184,6 +187,21 @@
 				}
 
 				return $cancel;
+			}
+
+			/**
+			 * Action links.
+			 *
+			 * @param array $links Action links.
+			 *
+			 * @return array
+			 */
+			public function plugin_action_links( $links ) {
+				$plugin_links = array();
+
+				$plugin_links[] = '<a href="' . esc_url( admin_url( 'admin.php?page=wc-settings&tab=checkout&section=wc_maxipago_gateway' ) ) . '">' . __( 'Settings', 'wc-maxipago' ) . '</a>';
+
+				return array_merge( $plugin_links, $links );
 			}
 
 		} // end class WC_MaxiPago();

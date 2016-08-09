@@ -19,12 +19,15 @@
 		 * WC MaxiPago
 		 *
 		 * @author   Leo Baiano <ljunior2005@gmail.com>
+		 * @version 1.0.0
 		 */
 		class WC_MaxiPago {
 			/**
 			 * Instance of this class.
 			 *
 			 * @var object
+			 *
+			 * @since 1.0.0
 			 */
 			protected static $instance = null;
 
@@ -32,11 +35,15 @@
 			 * Slug.
 			 *
 			 * @var string
+			 *
+			 * @since 1.0.0
 			 */
 			protected static $text_domain = 'wc-maxipago';
 
 			/**
 			 * Initialize the plugin
+			 *
+			 * @since 1.0.0
 			 */
 			private function __construct() {
 				// Check if WooCommerce activated and if class WC_Payment_Gateway exists
@@ -82,6 +89,9 @@
 			/**
 			 * Return an instance of this class.
 			 *
+			 *
+			 * @since 1.0.0
+			 *
 			 * @return object A single instance of this class.
 			 */
 			public static function get_instance() {
@@ -96,6 +106,9 @@
 			/**
 			 * Load the plugin text domain for translation.
 			 *
+			 *
+			 * @since 1.0.0
+			 *
 			 * @return void
 			 */
 			public function load_plugin_textdomain() {
@@ -104,6 +117,8 @@
 
 			/**
 			 * Load styles and scripts
+			 *
+			 * @since 1.0.0
 			 *
 			 */
 			public function load_styles_and_scripts() {
@@ -118,6 +133,8 @@
 			/**
 			 * Load styles and scripts
 			 *
+			 * @since 1.0.0
+			 *
 			 */
 			public function load_admin_styles_and_scripts() {
 				wp_enqueue_style( self::$text_domain . '_admin_css_main', plugins_url( '/assets/css/admin_main.css', __FILE__ ), array(), null, 'all' );
@@ -131,6 +148,8 @@
 			/**
 			 * Load auxiliary and third classes are in the class directory
 			 *
+			 * @since 1.0.0
+			 *
 			 */
 			public function load_helper() {
 				$class_dir = plugin_dir_path( __FILE__ ) . "/helper/";
@@ -141,6 +160,9 @@
 
 			/**
 			 * Includes.
+			 *
+			 * @since 1.0.0
+			 *
 			 */
 			private function includes() {
 				include_once 'includes/wc-maxipago-gateway.php';
@@ -148,6 +170,9 @@
 
 			/**
 			 * Print notice - WooCommerce not activated
+			 *
+			 * @since 1.0.0
+			 *
 			 */
 			public function notice_woocommerce_missing() {
 				include 'views/html-notice-woocommerce-missing.php';
@@ -157,6 +182,8 @@
 			 * Add the gateway to WooCommerce.
 			 *
 			 * @param array $methods WooCommerce payment methods.
+			 *
+			 * @since 1.0.0
 			 *
 			 * @return array Payment methods with MAxiPAgo.
 			 */
@@ -170,6 +197,8 @@
 			 * Hides the WC_MaxiPago with payment method with the customer lives outside Brazil.
 			 *
 			 * @param   array $available_gateways Default Available Gateways.
+			 *
+			 * @since 1.0.0
 			 *
 			 * @return  array New Available Gateways.
 			 */
@@ -189,6 +218,8 @@
 			 * @param  bool     $cancel Check if need cancel the order.
 			 * @param  WC_Order $order  Order object.
 			 *
+			 * @since 1.0.0
+			 *
 			 * @return bool
 			 */
 			public function stop_cancel_unpaid_orders( $cancel, $order ) {
@@ -203,6 +234,8 @@
 			 * Action links.
 			 *
 			 * @param array $links Action links.
+			 *
+			 * @since 1.0.0
 			 *
 			 * @return array
 			 */

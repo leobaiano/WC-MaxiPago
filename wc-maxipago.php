@@ -39,15 +39,29 @@
 			 * Initialize the plugin
 			 */
 			private function __construct() {
-				// Load plugin text domain
-				add_action( 'plugins_loaded', array( $this, 'load_plugin_textdomain' ) );
+				// Check if WooCommerce activated and if class WC_Payment_Gateway exists
+				if ( class_exists( 'WC_Payment_Gateway' ) ) {
+					// Load plugin text domain
+					add_action( 'plugins_loaded', array( $this, 'load_plugin_textdomain' ) );
 
-				// Load styles and script
-				add_action( 'wp_enqueue_scripts', array( $this, 'load_styles_and_scripts' ) );
-				add_action( 'admin_enqueue_scripts', array( $this, 'load_admin_styles_and_scripts' ) );
+					// Load styles and script
+					add_action( 'wp_enqueue_scripts', array( $this, 'load_styles_and_scripts' ) );
 
-				// Load Helpers
-				add_action( 'init', array( $this, 'load_helper' ) );
+					// Load Helpers
+					add_action( 'init', array( $this, 'load_helper' ) );
+
+					// Check if is admin
+					if ( is_admin() ) {
+						// Load styles and scripts in admin
+						add_action( 'admin_enqueue_scripts', array( $this, 'load_admin_styles_and_scripts' ) );
+					}
+				} else {
+					// Check if is admin
+					if ( is_admin() ) {
+						// If WooCommerce not activated print notice
+						add_action( 'admin_notices', array( $this, 'notice_woocommerce_missing' ) );
+					}
+				}
 			}
 
 			/**
@@ -110,6 +124,13 @@
 				}
 			}
 
-		} // end class Baianada();
+			/**
+			 * Print notice - WooCommerce not activated
+			 */
+			public function notice_woocommerce_missing() {
+				include 'views/html-notice-woocommerce-missing.php';
+			}
+
+		} // end class WC_MaxiPago();
 		add_action( 'plugins_loaded', array( 'WC_MaxiPago', 'get_instance' ), 0 );
 	endif;

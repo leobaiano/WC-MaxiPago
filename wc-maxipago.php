@@ -162,6 +162,8 @@
 			 *
 			 */
 			private function includes() {
+				include_once 'includes/lib-maxi-pago/maxipago/Autoload.php';
+				include_once 'includes/lib-maxi-pago/maxiPago.php';
 				include_once 'includes/wc-maxipago-gateway.php';
 			}
 

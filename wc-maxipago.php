@@ -56,6 +56,9 @@
 					// Remove MaxiPAgo if outside Brazil
 					add_filter( 'woocommerce_available_payment_gateways', array( $this, 'hides_when_is_outside_brazil' ) );
 
+					// Prevents the store cancel orders that have not yet been paid
+					add_filter( 'woocommerce_cancel_unpaid_order', array( $this, 'stop_cancel_unpaid_orders' ), 10, 2 );
+
 					// Check if is admin
 					if ( is_admin() ) {
 						// Load styles and scripts in admin
@@ -165,6 +168,22 @@
 				}
 
 				return $available_gateways;
+			}
+
+			/**
+			 * Stop cancel unpaid MaxiPago orders.
+			 *
+			 * @param  bool     $cancel Check if need cancel the order.
+			 * @param  WC_Order $order  Order object.
+			 *
+			 * @return bool
+			 */
+			public function stop_cancel_unpaid_orders( $cancel, $order ) {
+				if ( 'maxipago' === $order->payment_method ) {
+					return false;
+				}
+
+				return $cancel;
 			}
 
 		} // end class WC_MaxiPago();

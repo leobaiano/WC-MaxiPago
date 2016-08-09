@@ -53,6 +53,9 @@
 					// Add the gateway to WooCommerce
 					add_filter( 'woocommerce_payment_gateways', array( $this, 'add_gateway' ) );
 
+					// Remove MaxiPAgo if outside Brazil
+					add_filter( 'woocommerce_available_payment_gateways', array( $this, 'hides_when_is_outside_brazil' ) );
+
 					// Check if is admin
 					if ( is_admin() ) {
 						// Load styles and scripts in admin
@@ -145,6 +148,23 @@
 				$methods[] = 'WC_MaxiPago_Gateway';
 
 				return $methods;
+			}
+
+			/**
+			 * Hides the WC_MaxiPago with payment method with the customer lives outside Brazil.
+			 *
+			 * @param   array $available_gateways Default Available Gateways.
+			 *
+			 * @return  array New Available Gateways.
+			 */
+			public function hides_when_is_outside_brazil( $available_gateways ) {
+
+				// Remove MaxiPAgo gateway.
+				if ( isset( $_REQUEST['country'] ) && 'BR' != $_REQUEST['country'] ) {
+					unset( $available_gateways['maxipago'] );
+				}
+
+				return $available_gateways;
 			}
 
 		} // end class WC_MaxiPago();

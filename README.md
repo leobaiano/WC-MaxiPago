@@ -8,6 +8,12 @@ The toilet MaxiPago is a plugin that can only be used with the WooCommerce. His 
 
 To use it you must have an account on MaxiPago.
 
+## Thanks ##
+
+[Claudio Sanches](https://profiles.wordpress.org/claudiosanches/) and [Gabriel Reguly](https://profiles.wordpress.org/gabriel-reguly/) by develop an excellent code in PagSeguro WooCommerce plugin which served me as a starting base.
+
+[Suissa](https://www.facebook.com/suissa?fref=nf) by creating the post that originated the idea of developing the plugin
+
 ## Contribute ##
 
 You can contribute to the source code in our [GitHub](https://github.com/leobaiano/WC-MaxiPago) page.

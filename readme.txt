@@ -12,9 +12,15 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 This plugin adds MaxiPago the list of payment gateways WooCommerce
 
+= Thanks =
+
+[Claudio Sanches](https://profiles.wordpress.org/claudiosanches/) and [Gabriel Reguly](https://profiles.wordpress.org/gabriel-reguly/) by develop an excellent code in PagSeguro WooCommerce plugin which served me as a starting base.
+
+[Suissa](https://www.facebook.com/suissa?fref=nf) by creating the post that originated the idea of developing the plugin
+
 = Contribute =
 
-You can contribute to the source code in our [https://github.com/leobaiano/WC-MaxiPago) page.
+You can contribute to the source code in our [Github](https://github.com/leobaiano/WC-MaxiPago) page.
 
 == Installation ==
 

@@ -23,7 +23,7 @@
 			$this->icon 				= apply_filters( 'woocommerce_maxipago_icon', plugins_url( 'assets/images/icon-maxipago.png', plugin_dir_path( __FILE__ ) ) );
 			$this->has_fields 			= false;
 			$this->method_title 		= __( 'MaxiPago', 'wc-maxipago' );
-			$this->method_description 	= __( 'Accept payments by credit card, bank debit or banking ticket using the MAxiPago.', 'wc-maxipago' );
+			$this->method_description 	= __( 'Accept payments by credit card, bank debit or banking ticket using the MaxiPago.', 'wc-maxipago' );
 			$this->order_button_text  	= __( 'Proceed to payment', 'wc-maxipago' );
 
 			// Load the form fields.
@@ -33,10 +33,13 @@
 			$this->init_settings();
 
 			// Define user set variables.
-			$this->title             = $this->get_option( 'title' );
-			$this->description       = $this->get_option( 'description' );
-			$this->email             = $this->get_option( 'merchant_id' );
-			$this->token             = $this->get_option( 'secret_key' );
+			$this->title        = $this->get_option( 'title' );
+			$this->description  = $this->get_option( 'description' );
+			$this->merchant_id 	= $this->get_option( 'merchant_id' );
+			$this->secret_key   = $this->get_option( 'secret_key' );
+
+			// Set the API.
+			$this->api = new maxiPago();
 
 			// Main actions
 			add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
@@ -80,6 +83,38 @@
 					'desc_tip'    => true,
 					'default'     => '',
 				),
+			);
+		}
+
+		/**
+		 * Process the payment and return the result.
+		 *
+		 * @param  int $order_id Order ID.
+		 *
+		 * @return array
+		 */
+
+		public function process_payment( $order_id ) {
+			$order = new WC_Order( $order_id );
+
+			$this->api->setCredentials( $this->merchant_id, $this->secret_key );
+			$this->api->setLogger( ABSPATH . 'wp-content/plugins/WC-MaxiPago/logs', 'INFO' );
+			$this->api->setDebug( true );
+			$this->api->setEnvironment( 'TEST' );
+
+			// Mark as on-hold (we're awaiting the cheque)
+			$order->update_status( 'on-hold', __( 'Awaiting payment', 'wc-maxipago' ) );
+
+			// Reduce stock levels
+			// $order->reduce_order_stock();
+
+			// Remove cart
+			WC()->cart->empty_cart();
+
+			// Return thankyou redirect
+			return array(
+				'result' => 'success',
+				'redirect' => $this->get_return_url( $order )
 			);
 		}
 	}

@@ -39,9 +39,12 @@ class WC_MaxiPago_Gateway extends WC_Payment_Gateway {
 		$this->secret_key   = $this->get_option( 'secret_key' );
 
 		// Set the API.
-		$this->api = new maxiPago();
+		// $this->api = new maxiPago();
+		$this->api = new WC_MaxiPago_API( $this );
 
 		// Main actions
+		add_action( 'woocommerce_api_wc_maxipago_gateway', array( $this, 'ipn_handler' ) );
+		add_action( 'valid_maxipago_ipn_request', array( $this, 'update_order_status' ) );
 		add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
 	}
 
@@ -96,25 +99,36 @@ class WC_MaxiPago_Gateway extends WC_Payment_Gateway {
 
 	public function process_payment( $order_id ) {
 		$order = new WC_Order( $order_id );
+		$args = array (
+					'hp_merchant_id'	=> $this->merchant_id,
+					'hp_processor_id'	=> 4,
+					'hp_method'			=> 'ccard',
+					'hp_txntype'		=> 'auth',
+					'hp_amount'			=> $order->get_total(),
+					'hp_refnum'			=> $order_id,
+					'hp_sig_itemid'		=> 'maxipago-' . $order_id,
+					'hp_bname' 			=> $order->billing_first_name . ' ' . $order->billing_last_name,
+				);
 
-		$this->api->setCredentials( $this->merchant_id, $this->secret_key );
-		$this->api->setLogger( ABSPATH . 'wp-content/plugins/WC-MaxiPago/logs', 'INFO' );
-		$this->api->setDebug( true );
-		$this->api->setEnvironment( 'TEST' );
-
-		// Mark as on-hold (we're awaiting the cheque)
-		$order->update_status( 'on-hold', __( 'Awaiting payment', 'wc-maxipago' ) );
-
-		// Reduce stock levels
-		// $order->reduce_order_stock();
-
-		// Remove cart
-		WC()->cart->empty_cart();
-
-		// Return thankyou redirect
 		return array(
 			'result' => 'success',
-			'redirect' => $this->get_return_url( $order )
+			'redirect' => add_query_arg( $args, $this->api->get_checkout_url() ),
 		);
+	}
+
+	/**
+	 * IPN handler.
+	 */
+	public function ipn_handler() {
+
+	}
+
+	/**
+	 * Update order status.
+	 *
+	 * @param array $data MaxiPago post data.
+	 */
+	public function update_order_status( $data ) {
+
 	}
 }

@@ -45,7 +45,11 @@ class WC_MaxiPago_Gateway extends WC_Payment_Gateway {
 		// Main actions
 		add_action( 'woocommerce_api_wc_maxipago_gateway', array( $this, 'ipn_handler' ) );
 		add_action( 'valid_maxipago_ipn_request', array( $this, 'update_order_status' ) );
+		add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
 		add_action( 'woocommerce_receipt_' . $this->id, array( $this, 'receipt_page' ) );
+
+		add_action( 'woocommerce_thankyou_' . $this->id, array( $this, 'thankyou_page' ) );
+		add_action( 'woocommerce_email_after_order_table', array( $this, 'email_instructions' ), 10, 3 );
 	}
 
 	/**

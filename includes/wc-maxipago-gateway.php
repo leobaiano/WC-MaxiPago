@@ -172,6 +172,7 @@ class WC_MaxiPago_Gateway extends WC_Payment_Gateway {
 					'hp_email'			=> $order->billing_email,
 					'hp_lang'			=> 'pt',
 					'hp_cf_1'			=> $order_id,
+					'hp_cf_2'			=> $_GET['key'],
 				);
 		$url = $this->api->get_checkout_url();
 

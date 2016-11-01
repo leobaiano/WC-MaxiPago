@@ -158,6 +158,7 @@ class WC_MaxiPago_Gateway extends WC_Payment_Gateway {
 					'hp_processor_id'	=> 4,
 					'hp_method'			=> 'ccard',
 					'hp_txntype'		=> 'sale',
+					'hp_currency'		=> 'BRL',
 					'hp_amount'			=> $order->get_total(),
 					'hp_refnum'			=> $order_id,
 					'hp_sig_itemid'		=> 'maxipago-' . $order_id,

@@ -66,6 +66,9 @@ if ( ! class_exists( 'WC_MaxiPago' ) ) :
 				// Prevents the store cancel orders that have not yet been paid
 				add_filter( 'woocommerce_cancel_unpaid_order', array( $this, 'stop_cancel_unpaid_orders' ), 10, 2 );
 
+				// Endpoint
+				add_action('woocommerce_api_'.strtolower( get_class( $this) ), array( $this, 'retorno_maxipago' ) );
+
 				// Check if is admin
 				if ( is_admin() ) {
 					// Load styles and scripts in admin
@@ -226,6 +229,17 @@ if ( ! class_exists( 'WC_MaxiPago' ) ) :
 			$plugin_links[] = '<a href="' . esc_url( admin_url( 'admin.php?page=wc-settings&tab=checkout&section=wc_maxipago_gateway' ) ) . '">' . __( 'Settings', 'wc-maxipago' ) . '</a>';
 
 			return array_merge( $plugin_links, $links );
+		}
+
+		/**
+		 * Confirm payment
+		 */
+		public function retorno_maxipago() {
+			$to = 'ljunior2005@gmail.com';
+			$subject = 'The subject';
+			$body = 'The email body content';
+
+			wp_mail( $to, $subject, $body );
 		}
 
 	} // end class WC_MaxiPago();

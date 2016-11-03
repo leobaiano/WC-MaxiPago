@@ -155,7 +155,7 @@ class WC_MaxiPago_Gateway extends WC_Payment_Gateway {
 
 		$post_values = array (
 					'hp_merchant_id'	=> $this->merchant_id,
-					'hp_processor_id'	=> 4,
+					'hp_processor_id'	=> 1,
 					'hp_method'			=> 'ccard',
 					'hp_txntype'		=> 'sale',
 					'hp_currency'		=> 'BRL',

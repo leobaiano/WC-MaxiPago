@@ -46,7 +46,6 @@ class WC_MaxiPago_Gateway extends WC_Payment_Gateway {
 		add_action( 'woocommerce_api_wc_maxipago_gateway', array( $this, 'ipn_handler' ) );
 		add_action( 'valid_maxipago_ipn_request', array( $this, 'update_order_status' ) );
 		add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
-		add_action( 'woocommerce_receipt_' . $this->id, array( $this, 'receipt_page' ) );
 
 		add_action( 'woocommerce_thankyou_' . $this->id, array( $this, 'thankyou_page' ) );
 		add_action( 'woocommerce_email_after_order_table', array( $this, 'email_instructions' ), 10, 3 );
@@ -113,11 +112,42 @@ class WC_MaxiPago_Gateway extends WC_Payment_Gateway {
     	// Clear cart
     	// WC()->cart->empty_cart();
 
+		// Values for MaxiPago page
+		$values = array (
+					'hp_merchant_id'	=> $this->merchant_id,
+					'hp_processor_id'	=> 1,
+					'hp_method'			=> 'ccard',
+					'hp_txntype'		=> 'sale',
+					'hp_currency'		=> 'BRL',
+					'hp_amount'			=> $order->get_total(),
+					'hp_refnum'			=> $order_id,
+					'hp_sig_itemid'		=> 'maxipago-' . $order_id,
+					'hp_bname' 			=> $order->billing_first_name . ' ' . $order->billing_last_name,
+					'hp_baddr'			=> $order->shipping_address_1,
+					'hp_baddr2'			=> $order->shipping_address_2,
+					'hp_bcity'			=> $order->shipping_city,
+					'hp_bstate'			=> $order->shipping_state,
+					'hp_bzip'			=> $order->shipping_postcode,
+					'hp_bcountry'		=> $order->shipping_country,
+					'hp_phone'			=> $order->billing_phone,
+					'hp_email'			=> $order->billing_email,
+					'hp_lang'			=> 'pt',
+					'hp_cf_1'			=> $order_id,
+					'hp_cf_2'			=> $order->order_key,
+				);
+		$url = $this->api->get_checkout_url();
+		foreach ( $values as $k => $v ) {
+			$param_list[] = "{$k}=" . rawurlencode( $v );
+		}
+		$param_str = implode( '&', $param_list );
+
+
+
     	// Returns success and redirects the user to a thank you page
     	$use_shipping = isset( $_POST['ship_to_different_address'] ) ? true : false;
 	    return array(
 	        'result'    => 'success',
-	        'redirect'  => add_query_arg( array( 'use_shipping' => $use_shipping ), $order->get_checkout_payment_url( true ) ),
+	        'redirect'	=> $url . '?' . $param_str,
 	    );
 	}
 
@@ -143,52 +173,6 @@ class WC_MaxiPago_Gateway extends WC_Payment_Gateway {
 	    if ( $this->instructions && ! $sent_to_admin && 'offline' === $order->payment_method && $order->has_status( 'on-hold' ) ) {
 	        echo wpautop( wptexturize( $this->instructions ) ) . PHP_EOL;
 	    }
-	}
-
-	/**
-	 * Output for the order received page.
-	 *
-	 * @param int $order_id Order ID.
-	 */
-	public function receipt_page( $order_id ) {
-		$order        = new WC_Order( $order_id );
-
-		$post_values = array (
-					'hp_merchant_id'	=> $this->merchant_id,
-					'hp_processor_id'	=> 1,
-					'hp_method'			=> 'ccard',
-					'hp_txntype'		=> 'sale',
-					'hp_currency'		=> 'BRL',
-					'hp_amount'			=> $order->get_total(),
-					'hp_refnum'			=> $order_id,
-					'hp_sig_itemid'		=> 'maxipago-' . $order_id,
-					'hp_bname' 			=> $order->billing_first_name . ' ' . $order->billing_last_name,
-					'hp_baddr'			=> $order->shipping_address_1,
-					'hp_baddr2'			=> $order->shipping_address_2,
-					'hp_bcity'			=> $order->shipping_city,
-					'hp_bstate'			=> $order->shipping_state,
-					'hp_bzip'			=> $order->shipping_postcode,
-					'hp_bcountry'		=> $order->shipping_country,
-					'hp_phone'			=> $order->billing_phone,
-					'hp_email'			=> $order->billing_email,
-					'hp_lang'			=> 'pt',
-					'hp_cf_1'			=> $order_id,
-					'hp_cf_2'			=> $_GET['key'],
-				);
-		$url = $this->api->get_checkout_url();
-
-		echo '<form method="post" action="' . $url . '" id="paymentFormMaxiPagoSmartPage">';
-			foreach ( $post_values as $key => $value ) {
-				echo '<input type="hidden" name="' . $key . '" value="' . $value . '">';
-			}
-			echo '<input type="submit" value="' . __( 'Make the payment', 'wc-maxipago' ) . '">';
-		echo '</form>';
-
-		// wc_enqueue_js( '
-		// 	$( "#browser-has-javascript" ).show();
-		// 	$( "#browser-no-has-javascript, #cancel-payment, #submit-payment" ).hide();
-		// 	document.getElementById("paymentFormMaxiPagoSmartPage").submit();
-		// ' );
 	}
 
 	/**

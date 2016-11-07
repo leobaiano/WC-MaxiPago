@@ -39,7 +39,6 @@ class WC_MaxiPago_Gateway extends WC_Payment_Gateway {
 		$this->secret_key   = $this->get_option( 'secret_key' );
 
 		// Set the API.
-		// $this->api = new maxiPago();
 		$this->api = new WC_MaxiPago_API( $this );
 
 		// Main actions
@@ -104,16 +103,13 @@ class WC_MaxiPago_Gateway extends WC_Payment_Gateway {
 		$order = new WC_Order( $order_id );
 
 		// Sets the order status to "waiting" (on-hold)
-    	// $order->update_status( 'on-hold', __( 'Waiting for confirmation of payment by maxiPago!', 'wc-maxipago' ) );
-
-    	// Reduce stock levels
-    	// $order->reduce_order_stock();
+    	$order->update_status( 'on-hold', __( 'Waiting for confirmation of payment by maxiPago!', 'wc-maxipago' ) );
 
     	// Clear cart
-    	// WC()->cart->empty_cart();
+    	WC()->cart->empty_cart();
 
 		// Values for MaxiPago page
-		$values = array (
+		$query_string = array (
 					'hp_merchant_id'	=> $this->merchant_id,
 					'hp_processor_id'	=> 1,
 					'hp_method'			=> 'ccard',
@@ -136,29 +132,20 @@ class WC_MaxiPago_Gateway extends WC_Payment_Gateway {
 					'hp_cf_2'			=> $order->order_key,
 				);
 		$url = $this->api->get_checkout_url();
-		foreach ( $values as $k => $v ) {
-			$param_list[] = "{$k}=" . rawurlencode( $v );
-		}
-		$param_str = implode( '&', $param_list );
-
-
+		$url_maxipago = add_query_arg( $query_string, $url );
 
     	// Returns success and redirects the user to a thank you page
     	$use_shipping = isset( $_POST['ship_to_different_address'] ) ? true : false;
 	    return array(
 	        'result'    => 'success',
-	        'redirect'	=> $url . '?' . $param_str,
+	        'redirect'	=> $url_maxipago,
 	    );
 	}
 
 	/**
 	 * Output for the order received page.
 	 */
-	public function thankyou_page() {
-	    if ( $this->instructions ) {
-	        echo wpautop( wptexturize( $this->instructions ) );
-	    }
-	}
+	public function thankyou_page() {}
 
 	/**
 	 * Add content to the WC emails.
@@ -168,12 +155,7 @@ class WC_MaxiPago_Gateway extends WC_Payment_Gateway {
 	 * @param bool $sent_to_admin
 	 * @param bool $plain_text
 	 */
-	public function email_instructions( $order, $sent_to_admin, $plain_text = false ) {
-
-	    if ( $this->instructions && ! $sent_to_admin && 'offline' === $order->payment_method && $order->has_status( 'on-hold' ) ) {
-	        echo wpautop( wptexturize( $this->instructions ) ) . PHP_EOL;
-	    }
-	}
+	public function email_instructions( $order, $sent_to_admin, $plain_text = false ) {}
 
 	/**
 	 * IPN handler.

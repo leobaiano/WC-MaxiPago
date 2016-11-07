@@ -235,17 +235,52 @@ if ( ! class_exists( 'WC_MaxiPago' ) ) :
 		 * Retorno payment
 		 */
 		public function retorno_maxipago() {
+			if ( empty( $_POST ) ) {
+				wp_redirect( home_url() );
+				die();
+			}
+			$order_id = intval( $_POST['hp_cf_1'] );
+			$order = new WC_Order( $order_id );
+			$order_key = $order->order_key;
+
+			if ( $order_key != $_POST['hp_cf_2'] ) {
+				wp_redirect( home_url() );
+				die();
+			}
+
+			$transaction = esc_attr( $_POST['hp_orderid'] );
+
+			$response = $_POST['hp_responsemsg'];
+			switch ( $response ) {
+				case 'APPROVED':
+					$order->add_order_note( __( 'MaxiPago: Payment approved.', 'wc-maxipago' ) );
+
+					// Reduce stock levels
+    				$order->reduce_order_stock();
+
+					// For WooCommerce 2.2 or later.
+					add_post_meta( $order->id, '_transaction_id', $transaction, true );
+
+					// Changing the order for processing and reduces the stock.
+					$order->payment_complete();
+					break;
+				default:
+					break;
+			}
 
 			$content = '<h1>Conteúdo</h1>';
+			$content .= 'host: ' . $_SERVER['HTTP_REFERER'];
 			$post_maxipago = $_POST;
 			foreach ( $post_maxipago as $key => $value ) {
 				$content .= $key . ': ' . $value . '<br />';
 			}
-
 			$to = 'ljunior2005@gmail.com';
 			$subject = 'Retorno maxipago';
-
 			wp_mail( $to, $subject, $content );
+
+
+			$return_url = $order->get_checkout_order_received_url();
+			wp_redirect( $return_url );
 		}
 
 	} // end class WC_MaxiPago();

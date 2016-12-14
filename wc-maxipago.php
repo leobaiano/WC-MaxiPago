@@ -264,20 +264,11 @@ if ( ! class_exists( 'WC_MaxiPago' ) ) :
 					// Changing the order for processing and reduces the stock.
 					$order->payment_complete();
 					break;
+				case 'DECLINED':
+					$order->update_status( 'refunded', __( 'MaxiPago: Payment refunded.', 'wc-maxipago' ) );
 				default:
 					break;
 			}
-
-			$content = '<h1>Conteúdo</h1>';
-			$content .= 'host: ' . $_SERVER['HTTP_REFERER'];
-			$post_maxipago = $_POST;
-			foreach ( $post_maxipago as $key => $value ) {
-				$content .= $key . ': ' . $value . '<br />';
-			}
-			$to = 'ljunior2005@gmail.com';
-			$subject = 'Retorno maxipago';
-			wp_mail( $to, $subject, $content );
-
 
 			$return_url = $order->get_checkout_order_received_url();
 			wp_redirect( $return_url );
